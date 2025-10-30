@@ -1,15 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdminClient } from "../../../../src/supabase/server/adminClient";
 
-// ✅ PATCH handler — updated for Next.js 16
 export async function PATCH(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> } // updated type
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id: entryId } = await context.params; // ✅ await params
     const body = await request.json();
+    const entryId = params.id;
 
     if (!entryId) {
       return NextResponse.json(
@@ -51,13 +49,12 @@ export async function PATCH(
   }
 }
 
-
 export async function DELETE(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> } 
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id: entryId } = await context.params; 
+    const entryId = params.id;
 
     if (!entryId) {
       return NextResponse.json(

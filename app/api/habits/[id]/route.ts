@@ -1,14 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdminClient } from "../../../../src/supabase/server/adminClient";
 
 export async function PATCH(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }  
+  { params }: { params: { id: string } }
 ) {
   try {
     const body = await request.json();
-    const { id: habitId } = await context.params; 
+    const habitId = params.id;
 
     if (!habitId) {
       return NextResponse.json(
@@ -17,6 +16,7 @@ export async function PATCH(
       );
     }
 
+    // Map camelCase to snake_case
     const dbUpdates: Record<string, any> = {
       updated_at: new Date().toISOString(),
     };
@@ -24,8 +24,7 @@ export async function PATCH(
     if (body.userId !== undefined) dbUpdates.user_id = body.userId;
     if (body.category !== undefined) dbUpdates.category = body.category;
     if (body.title !== undefined) dbUpdates.title = body.title;
-    if (body.description !== undefined)
-      dbUpdates.description = body.description;
+    if (body.description !== undefined) dbUpdates.description = body.description;
     if (body.isActive !== undefined) dbUpdates.is_active = body.isActive;
     if (body.createdAt !== undefined) dbUpdates.created_at = body.createdAt;
 
@@ -39,7 +38,10 @@ export async function PATCH(
 
     if (error) {
       console.error("Error updating habit:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json(data);
@@ -54,10 +56,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> } // ✅ updated for Next.js 16
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id: habitId } = await context.params; // ✅ await params
+    const habitId = params.id;
 
     if (!habitId) {
       return NextResponse.json(
@@ -77,7 +79,10 @@ export async function DELETE(
 
     if (error) {
       console.error("Error deleting habit:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ success: true });
